@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-a = Analysis(['darkapp.py'],
+a = Analysis(['src/darkapp.py'],
              binaries=[],
              datas=[],
              hiddenimports=[],
