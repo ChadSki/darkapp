@@ -1,8 +1,11 @@
+import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
     QTreeView, QListView, QFileSystemModel, QApplication)
 
 from PyQt5.QtGui import QPalette as qp
+
+from halomodel import HaloModel
 
 
 def build_palette():
@@ -10,6 +13,7 @@ def build_palette():
     foreground = QtCore.Qt.white
     accent = QtGui.QColor(53, 53, 53)
     background = QtGui.QColor(15, 15, 15)
+    highlight = QtGui.QColor(202, 81, 0)
     for item, color in (
             (qp.Window, accent),
             (qp.WindowText, foreground),
@@ -21,7 +25,7 @@ def build_palette():
             (qp.Button, accent),
             (qp.ButtonText, foreground),
             (qp.BrightText, QtCore.Qt.red),
-            (qp.Highlight, accent),
+            (qp.Highlight, highlight),
             (qp.HighlightedText, foreground)):
         palette.setColor(item, color)
     return palette
@@ -31,9 +35,12 @@ class MainWindow(QTreeView):
     def __init__(self):
         QTreeView.__init__(self)
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        model = QFileSystemModel()
-        model.setRootPath('C:\\')
-        self.setModel(model)
+        if False:
+            model = QFileSystemModel()
+            model.setRootPath('C:\\')
+            self.setModel(model)
+        else:
+            self.setModel(HaloModel())
         self.doubleClicked.connect(self.test)
 
     def test(self, signal):
@@ -49,8 +56,11 @@ class MainApplication(QApplication):
 
 
 def main(argv):
-    import sys
-    app = MainApplication(sys.argv)
+    app = MainApplication(argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main(sys.argv)
