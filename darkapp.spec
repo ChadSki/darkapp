@@ -2,15 +2,13 @@
 
 block_cipher = None
 
-
 a = Analysis(['darkapp.py'],
-             pathex=['C:\\Users\\Feanor\\CodeProjects\\python'],
              binaries=[],
              datas=[],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
-             excludes=[],
+             excludes=['main'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher)
@@ -32,20 +30,20 @@ for each in to_remove:
 for each in a.binaries:
     print(each[0])
 
-pyz = PYZ(a.pure, a.zipped_data,
-             cipher=block_cipher)
+pyz = PYZ(
+  a.pure,
+  a.zipped_data,
+  cipher=block_cipher)
+
+upx_blacklist = 'crt', 'qwindows', 'python36'
+
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=True,
+          a.binaries,
+          a.zipfiles,
+          a.datas,
           name='darkapp',
           debug=False,
           strip=False,
-          upx=True,
-          console=True )
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-               strip=False,
-               upx=True,
-               name='darkapp')
+          upx=False,
+          console=False )
