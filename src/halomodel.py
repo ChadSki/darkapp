@@ -5,9 +5,9 @@ class MyNode(object):
 
     def __init__(self, name, state, description, parent=None):
         self.data = {
-            'Foo': name,
-            'Bar': state,
-            'Baz': description
+            None: name,
+            'Status': state,
+            'Value': description
         }
         self.parent = parent
         self.children = []
@@ -48,7 +48,7 @@ class HaloModel(QAbstractItemModel):
         super().__init__(*args, **kwargs)
 
         self.treeview = kwargs.get('parent')
-        self.headers = ['Foo', 'Bar', 'Baz']
+        self.headers = [None, 'Status', 'Value']
         self.columns = len(self.headers)
         self.load_model()
 

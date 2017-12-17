@@ -28,6 +28,8 @@ def build_palette():
             (qp.Highlight, highlight),
             (qp.HighlightedText, foreground)):
         palette.setColor(item, color)
+    palette.setColor(qp.Disabled, qp.Light, QtCore.Qt.transparent)
+    palette.setColor(qp.Disabled, qp.Text, accent.lighter())
     return palette
 
 
@@ -35,6 +37,7 @@ class MainTree(QTreeView):
     def __init__(self):
         QTreeView.__init__(self)
         self.setModel(HaloModel())
+        self.setWindowTitle('Darkapp')
         self.resize(800, 600)
         self.setColumnWidth(0, 300)
         self.setColumnWidth(1, 60)
