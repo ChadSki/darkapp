@@ -6,13 +6,19 @@
 
 from basicstruct import BasicStruct
 
+
 class HaloStruct(BasicStruct):
 
-    """TODO"""
+    """A way of interpreting binary data as a collection of fields.
+
+    HaloStruct is mostly the same as BasicStruct, except that it
+    has a reference to the map object and can therefore contain
+    HaloFields."""
 
     def __init__(self, byteaccess, halomap, **fields):
         object.__setattr__(self, 'halomap', halomap)
         super().__init__(byteaccess, **fields)
+
 
 def define_halo_struct(struct_size, **fields):
     """Returns a constructor function for a newly defined Halo struct.

@@ -11,7 +11,6 @@ from ctypes import (c_ulong, c_char_p)
 k32 = ctypes.windll.kernel32
 
 
-
 def open_process(process_name):
     """Define a ByteAccess type for a specific process.
 

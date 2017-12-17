@@ -6,14 +6,15 @@
 
 import copy
 
+
 class Event(set):
 
     """A very simple event handler.
-    
+
     Add an event handler (a function) with += and -= syntax.
     You may remove all handlers at once with `.clear()`.
     Invoke the handler with function call syntax `()`.
-    
+
     Event handlers should be short and return quickly! Execution cannot
     continue until all event handlers have finished, so make it snappy."""
 
@@ -21,9 +22,13 @@ class Event(set):
         for handler in self:
             handler(*args, **kwargs)
 
+
 class BasicStruct(object):
 
-    """Wrap a ByteAccess and implement a struct interface.
+    """A way of interpreting binary data as a collection of fields.
+
+    Wraps a ByteAccess and implements a struct interface: string field
+    names for accessing primitive data types (int, float, string...)
 
     Attributes
     ----------
@@ -95,7 +100,7 @@ class BasicStruct(object):
 
         If the field has changed, invokes the `property_changed` event handler
         and triggers any registered events.
-        
+
         This method is called when normal attribute lookup fails. It is here
         used to extend attribute lookup to the `fields` dictionary, so that
         those fields look like normal attributes."""
@@ -111,8 +116,10 @@ class BasicStruct(object):
             if oldvalue != newvalue:
                 self.property_changed(attr_name)
         else:
-            raise AttributeError("Cannot assign to {} because it is not a "
+            raise AttributeError(
+                "Cannot assign to {} because it is not a "
                 "member of this struct.".format(attr_name))
+
 
 def define_basic_struct(struct_size, **fields):
     """Returns a constructor function for a newly defined struct.

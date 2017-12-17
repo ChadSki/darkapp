@@ -9,6 +9,7 @@ from byteaccess import open_file, open_process
 from .headers import IndexHeader, MapHeader, TagHeader
 from .halotag import HaloTag
 
+
 class HaloMap(object):
 
     """Represents a single Halo mapfile and everything in it.
@@ -69,16 +70,17 @@ class HaloMap(object):
 
         map_header = MapHeader(map_access, {'file': 0, 'mem': 0x6A8154})
 
-        index_header = IndexHeader(map_access,
-            {'file': map_header.index_offset, 'mem': 0x40440000})
+        index_header = IndexHeader(map_access, {
+            'file': map_header.index_offset,
+            'mem': 0x40440000})
 
         # Almost always 0x40440028 (map protection may change this)
         mem_index_offset = index_header.primary_magic
 
         # Usually the tag index directly follows the index header. However,
         # some forms of map protection move the tag index to other locations.
-        file_index_offset = (index_header.primary_magic - 0x40440000
-                             + map_header.index_offset)
+        file_index_offset = (
+            index_header.primary_magic - 0x40440000 + map_header.index_offset)
 
         # On disk, we need to use a magic value to convert raw pointers into file
         # offsets. Offsets in memory are already valid pointers.
@@ -87,17 +89,18 @@ class HaloMap(object):
             'mem': 0}
 
         tag_headers = [
-            TagHeader(self,
-                {'file': TagHeader.struct_size * i + file_index_offset,
-                 'mem': TagHeader.struct_size * i + mem_index_offset})
+            TagHeader(self, {
+                'file': TagHeader.struct_size * i + file_index_offset,
+                'mem': TagHeader.struct_size * i + mem_index_offset})
             for i in range(index_header.tag_count)]
 
         # build associative tag collection
-        tags_by_ident = {tag_header.ident: HaloTag(tag_header, self)
-                         for tag_header in tag_headers}
+        tags_by_ident = {
+            tag_header.ident: HaloTag(tag_header, self)
+            for tag_header in tag_headers}
         # type: Dict[int, HaloTag]
 
-        # save references to stuff
+        # save the references
         self.map_header = map_header
         self.index_header = index_header
         self.tags_by_ident = tags_by_ident
@@ -129,11 +132,13 @@ class HaloMap(object):
         through all tags which match the search criteria.
         """
         def match(tag):
-            return (any((re.search(tag_class, tag.first_class),
-                         re.search(tag_class, tag.second_class),
-                         re.search(tag_class, tag.third_class)))
-                    and all(re.search(regex, tag.name)
-                           for regex in name_fragments))
+            return (
+                any((
+                    re.search(tag_class, tag.first_class),
+                    re.search(tag_class, tag.second_class),
+                    re.search(tag_class, tag.third_class))) and
+                all(re.search(regex, tag.name)
+                    for regex in name_fragments))
 
         return filter(match, self.tags_by_ident.values())
 
