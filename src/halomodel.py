@@ -49,12 +49,12 @@ class HaloModel(QAbstractItemModel):
 
         self.treeview = kwargs.get('parent')
         self.headers = ['Foo', 'Bar', 'Baz']
-        self.columns = 3
+        self.columns = len(self.headers)
         self.load_model()
 
     def load_model(self):
-        self.root = MyNode('root', 'on', 'I am root', None)
-        itemA = MyNode('itemA', 'on', 'this is item A', self.root)
+        self.root = MyNode('root', None, 'I am root', None)
+        itemA = MyNode('itemA', None, 'this is item A', self.root)
         itemA1 = MyNode('itemA1', 'on', 'this is item A1', itemA)
 
         itemB = MyNode('itemB', 'on', 'this is item B', self.root)
@@ -108,6 +108,11 @@ class HaloModel(QAbstractItemModel):
             return 0
         return len(node)
 
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
+            return self.headers[section]
+        return QAbstractItemModel.headerData(self, section, orientation, role)
+
     def data(self, index, role):
         if role == Qt.DecorationRole:
             return None
@@ -118,7 +123,6 @@ class HaloModel(QAbstractItemModel):
             return None
 
         node = self.nodeFromIndex(index)
-
         return node.data[self.headers[index.column()]]
 
     def setData(self, index, value, role):

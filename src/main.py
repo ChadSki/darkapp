@@ -31,21 +31,14 @@ def build_palette():
     return palette
 
 
-class MainWindow(QTreeView):
+class MainTree(QTreeView):
     def __init__(self):
         QTreeView.__init__(self)
-        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        if False:
-            model = QFileSystemModel()
-            model.setRootPath('C:\\')
-            self.setModel(model)
-        else:
-            self.setModel(HaloModel())
-        # self.doubleClicked.connect(self.test)
-
-    def test(self, signal):
-        file_path = self.model().filePath(signal)
-        print(file_path)
+        self.setModel(HaloModel())
+        self.resize(800, 600)
+        self.setColumnWidth(0, 300)
+        self.setColumnWidth(1, 60)
+        self.expandAll()
 
 
 class MainApplication(QApplication):
@@ -57,8 +50,8 @@ class MainApplication(QApplication):
 
 def main(argv):
     app = MainApplication(argv)
-    window = MainWindow()
-    window.show()
+    tree = MainTree()
+    tree.show()
     sys.exit(app.exec_())
 
 
