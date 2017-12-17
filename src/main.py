@@ -41,7 +41,7 @@ class MainWindow(QTreeView):
             self.setModel(model)
         else:
             self.setModel(HaloModel())
-        self.doubleClicked.connect(self.test)
+        # self.doubleClicked.connect(self.test)
 
     def test(self, signal):
         file_path = self.model().filePath(signal)

@@ -4,9 +4,11 @@ from PyQt5.QtCore import Qt, QAbstractItemModel, QModelIndex
 class MyNode(object):
 
     def __init__(self, name, state, description, parent=None):
-        self.name = name
-        self.state = state
-        self.description = description
+        self.data = {
+            'Foo': name,
+            'Bar': state,
+            'Baz': description
+        }
         self.parent = parent
         self.children = []
         self.setParent(parent)
@@ -48,7 +50,9 @@ class HaloModel(QAbstractItemModel):
         self.treeview = kwargs.get('parent')
         self.headers = ['Foo', 'Bar', 'Baz']
         self.columns = 3
+        self.load_model()
 
+    def load_model(self):
         self.root = MyNode('root', 'on', 'I am root', None)
         itemA = MyNode('itemA', 'on', 'this is item A', self.root)
         itemA1 = MyNode('itemA1', 'on', 'this is item A1', itemA)
@@ -115,16 +119,12 @@ class HaloModel(QAbstractItemModel):
 
         node = self.nodeFromIndex(index)
 
-        if index.column() == 0:
-            return node.name
+        return node.data[self.headers[index.column()]]
 
-        elif index.column() == 1:
-            return node.state
-
-        elif index.column() == 2:
-            return node.description
-        else:
-            return None
+    def setData(self, index, value, role):
+        node = self.nodeFromIndex(index)
+        node.data[self.headers[index.column()]] = value
+        return True
 
     def parent(self, child):
         if not child.isValid():
