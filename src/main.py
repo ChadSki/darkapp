@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
 
 from PyQt5.QtGui import QPalette as qp
 
-from halomodel import HaloModel
+from gui import HaloModel
 
 
 def build_palette():
