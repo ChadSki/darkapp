@@ -104,6 +104,7 @@ class HaloMap(object):
         self.map_header = map_header
         self.index_header = index_header
         self.tags_by_ident = tags_by_ident
+        self.tag_types = set(tag.first_class for tag in tags_by_ident.values())
 
     def tag(self, tag_class='', *name_fragments):
         """Find a tag by name and class. Returns the first tag to match all

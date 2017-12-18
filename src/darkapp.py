@@ -2,9 +2,8 @@
 # reference. Changes should go into main.py, or you can recompile darkapp.
 
 import os
+import ctypes
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (
-    QTreeView, QListView, QFileSystemModel, QApplication)
 import sys
 
 if getattr(sys, 'frozen', False):

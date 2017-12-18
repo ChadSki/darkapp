@@ -49,7 +49,10 @@ class Ascii(BasicField):
 
     def getf(self, byteaccess):
         buf = byteaccess.read_ascii(self.offset, self.length)
-        return buf[::-1] if self.reverse else buf
+        try:
+            return buf.decode('ascii')[::-1] if self.reverse else buf
+        except UnicodeDecodeError:
+            return str(buf[::-1]) if self.reverse else buf
 
     def setf(self, byteaccess, newvalue):
         self.write_ascii(self.offset, self.length,

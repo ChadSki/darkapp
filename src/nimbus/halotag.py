@@ -7,6 +7,7 @@
 from .tags import tag_types
 from .halofield import add_offsets
 
+
 class HaloTag(object):
 
     """Represents one Halo tag and all of its data.
@@ -32,6 +33,9 @@ class HaloTag(object):
             data = None
         object.__setattr__(self, 'data', data)
 
+    def __lt__(self, other):
+        return str(self) < str(other)
+
     def __str__(self):
         """Returns a 1-line string representation of this tag."""
         answer = '[{}]{}({})'.format(self.first_class, self.name, self.ident)
@@ -47,6 +51,8 @@ class HaloTag(object):
             2. self.header
             3. self.data
         """
+        if name == 'data':
+            return getattr(self, 'data')
         try:
             return getattr(self.header, name)
         except:

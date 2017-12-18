@@ -11,9 +11,10 @@ from struct import pack, unpack
 class BaseByteAccess(metaclass=abc.ABCMeta):
 
     """Abstract base class implements functionality common to all ByteAccesses.
-    
+
     Provides generic methods for reading and writing different values. Subclasses
-    need onlt implement _read_bytes and _write_bytes, and optionally a custom __init__."""
+    need only implement _read_bytes and _write_bytes, and optionally a custom __init__.
+    """
 
     def __init__(self, offset, size):
         """Provide access to a region of bytes.
@@ -100,11 +101,7 @@ class BaseByteAccess(metaclass=abc.ABCMeta):
     # read/write strings
 
     def read_ascii(self, offset, length):
-        buf = self.read_bytes(offset, length)
-        try:
-            return buf.decode('ascii')
-        except UnicodeDecodeError:
-            return repr(buf)
+        return self.read_bytes(offset, length)
 
     def write_ascii(self, offset, length, data):
         buf = data.encode('ascii')

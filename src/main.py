@@ -1,7 +1,7 @@
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import (
-    QTreeView, QListView, QFileSystemModel, QApplication)
+    QTreeView, QApplication)
 
 from PyQt5.QtGui import QPalette as qp
 
@@ -36,12 +36,12 @@ def build_palette():
 class MainTree(QTreeView):
     def __init__(self):
         QTreeView.__init__(self)
-        self.setModel(HaloModel())
+        self.setModel(HaloModel(
+            "C:\\Program Files (x86)\\Microsoft Games\\Halo\\MAPS\\bloodgulch.map"))
         self.setWindowTitle('Darkapp')
-        self.resize(800, 600)
-        self.setColumnWidth(0, 300)
-        self.setColumnWidth(1, 60)
-        self.expandAll()
+        self.resize(900, 800)
+        self.setColumnWidth(0, 550)
+        self.setColumnWidth(1, 100)
 
 
 class MainApplication(QApplication):
