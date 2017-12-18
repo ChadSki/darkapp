@@ -1,1 +1,1 @@
-from .halomodel import HaloModel
+from .mainapplication import MainApplication

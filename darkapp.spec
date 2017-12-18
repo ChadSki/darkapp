@@ -35,8 +35,6 @@ pyz = PYZ(
   a.zipped_data,
   cipher=block_cipher)
 
-upx_blacklist = 'crt', 'qwindows', 'python36'
-
 exe = EXE(pyz,
           a.scripts,
           a.binaries,
