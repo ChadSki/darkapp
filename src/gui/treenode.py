@@ -1,6 +1,7 @@
 import abc
 from .icons import get_icon
 from nimbus.tags import tag_names
+from nimbus.halofield import StructArray
 
 
 class TreeNode(metaclass=abc.ABCMeta):
@@ -49,9 +50,30 @@ class TreeNode(metaclass=abc.ABCMeta):
 
 class FieldNode(TreeNode):
 
+    def __init__(self, fieldname, field, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = fieldname
+        self.field = field
+
+    def display(self, column):
+        if column == 0:
+            return self.name
+        elif column == 1:
+            return type(self.field).__name__
+        elif column == 2:
+            return getattr(self.parent.hstruct, self.name)
+
+    def icon(self):
+        return get_icon()
+
+
+class StructArrayNode(TreeNode):
+
     def __init__(self, fieldname, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.name = fieldname
+        for i, hstruct in enumerate(getattr(self.parent.hstruct, self.name)):
+            StructNode('{} {}'.format(type(hstruct).__name__, i), hstruct, self)
 
     def display(self, column):
         if column == 0:
@@ -59,8 +81,6 @@ class FieldNode(TreeNode):
         elif column == 1:
             return type(
                 self.parent.hstruct.fields[self.name]).__name__
-        elif column == 2:
-            return getattr(self.parent.hstruct, self.name)
 
     def icon(self):
         return get_icon()
@@ -73,8 +93,11 @@ class StructNode(TreeNode):
         self.name = name
         self.hstruct = hstruct
         if hstruct is not None:
-            for fieldname in self.hstruct.fields.keys():
-                FieldNode(fieldname, self)
+            for fieldname, field in self.hstruct.fields.items():
+                if isinstance(field, StructArray):
+                    StructArrayNode(fieldname, self)
+                else:
+                    FieldNode(fieldname, field, self)
 
     def display(self, column):
         if column == 0:
@@ -96,7 +119,7 @@ class TagNode(TreeNode):
 
     def display(self, column):
         if column == 0:
-            return str(self.htag)[1:-1:]
+            return self.htag.name
         elif column == 1:
             return 'Tag'
 
