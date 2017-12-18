@@ -1,5 +1,6 @@
 import abc
 from .icons import get_icon
+from nimbus.tags import tag_names
 
 
 class TreeNode(metaclass=abc.ABCMeta):
@@ -103,16 +104,6 @@ class TagNode(TreeNode):
         return get_icon()
 
 
-tag_types = {
-    'bipd': 'Biped',
-    'bitm': 'Bitmap',
-    'coll': 'Collision',
-    'effe': 'Effect',
-    'proj': 'Projectile',
-    'weap': 'Weapon',
-}
-
-
 class TagTypeNode(TreeNode):
 
     def __init__(self, tag_type, tags, *args, **kwargs):
@@ -127,7 +118,7 @@ class TagTypeNode(TreeNode):
         if column == 0:
             return '[{}] - {}'.format(
                 self.tag_type,
-                tag_types.get(self.tag_type, ''))
+                tag_names.get(self.tag_type, ''))
         elif column == 2:
             return self.count
 

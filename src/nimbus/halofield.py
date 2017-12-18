@@ -4,14 +4,16 @@
 # This software is free and open source, released under the 2-clause BSD
 # license as detailed in the LICENSE file.
 
-import basicstruct
 from basicstruct.field import BasicField
-from .halostruct import define_halo_struct
+from .halostruct import HaloStruct
+
 
 def add_offsets(offset_dict, edit_fn):
-    """TODO"""
+    """For adding offsets without having to choose between
+    file offsets and memory offsets."""
     return {where: edit_fn(offset)
             for where, offset in offset_dict.items()}
+
 
 class HaloField(BasicField):
 
@@ -43,7 +45,7 @@ class AsciizPtr(HaloField):
             self.string_access = self.halomap.map_access(
                 name_offset, AsciizPtr.max_str_size)
         return self.string_access.read_asciiz(0, AsciizPtr.max_str_size)
-        
+
     def setf(self, byteaccess):
         raise NotImplementedError()
 
@@ -82,9 +84,12 @@ class StructArray(HaloField):
 
     """A pointer to an array of Halo structs somewhere else in the mapfile."""
 
-    def __init__(self, *, offset, docs="", **kwargs):
+    def __init__(self, name, *, offset, struct_size, docs="", fields):
         super().__init__(offset, docs)
-        self.struct_type = define_halo_struct(**kwargs)
+
+        self.struct_type = type(name, (HaloStruct,), {
+            'struct_size': struct_size,
+            'fields': fields})
         self.children = None
 
     def getf(self, byteaccess):
@@ -103,8 +108,9 @@ class StructArray(HaloField):
 
             # get accesses and build structs around them, then save for later
             self.children = [
-                self.struct_type(self.halomap,
-                    add_offsets(array_offset, lambda offset: offset + i * size))
+                self.struct_type(self.halomap, add_offsets(
+                    array_offset,
+                    lambda offset: offset + i * size))
                 for i in range(count)]
         return self.children
 

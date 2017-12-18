@@ -4,7 +4,8 @@
 # This software is free and open source, released under the 2-clause BSD
 # license as detailed in the LICENSE file.
 
-from .tags import tag_types
+from . import tags
+from .tags import tag_names
 from .halofield import add_offsets
 
 
@@ -25,11 +26,13 @@ class HaloTag(object):
         object.__setattr__(self, 'halomap', halomap)
         object.__setattr__(self, 'header', header)
         try:
-            data = tag_types[header.first_class](halomap,
+            HaloTag = getattr(tags, '{}Tag'.format(tag_names.get(header.first_class)))
+            data = HaloTag(
+                halomap,
                 add_offsets(
                     self.halomap.magic_offset,
                     lambda magic: header.meta_offset_raw - magic))
-        except KeyError:
+        except AttributeError:
             data = None
         object.__setattr__(self, 'data', data)
 
@@ -55,7 +58,7 @@ class HaloTag(object):
             return getattr(self, 'data')
         try:
             return getattr(self.header, name)
-        except:
+        except AttributeError:
             return getattr(self.data, name)
 
     def __setattr__(self, attr_name, newvalue):

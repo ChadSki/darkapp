@@ -45,10 +45,11 @@ class BasicStruct(object):
         the event.
     """
 
-    def __init__(self, byteaccess, **kwargs):
-        object.__setattr__(self, 'byteaccess', byteaccess)
+    def __init__(self, potential_access, offset):
+        object.__setattr__(
+            self, 'byteaccess', potential_access(offset, type(self).struct_size))
         object.__setattr__(self, 'fields', {})
-        for name, field in kwargs.items():
+        for name, field in type(self).fields.items():
             self.fields[name] = copy.copy(field)
             # fields need to access our byteaccess, and trigger our
             # property_changed event
@@ -119,26 +120,3 @@ class BasicStruct(object):
             raise AttributeError(
                 "Cannot assign to {} because it is not a "
                 "member of this struct.".format(attr_name))
-
-
-def define_basic_struct(struct_size, **fields):
-    """Returns a constructor function for a newly defined struct.
-
-    Parameters
-    ----------
-    struct_size : int
-        size of the struct in bytes
-
-    **fields : Dict[str, BasicField]
-        the remaining arguments are grouped into a dictionary, with the
-        argument name as the key and the argument itself (which should be a
-        BasicField) as the value.
-    """
-    def finish_construction(thing_access, offset):
-        # enclose the bytes we need
-        byteaccess = thing_access(offset, struct_size)
-        # build the struct interface around it
-        return BasicStruct(byteaccess, **fields)
-
-    finish_construction.struct_size = struct_size
-    return finish_construction
