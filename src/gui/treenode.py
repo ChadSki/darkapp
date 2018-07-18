@@ -6,7 +6,7 @@ from nimbus.halofield import StructArray
 
 class TreeNode(metaclass=abc.ABCMeta):
 
-    def __init__(self, parent=None):
+    def __init__(self, *, parent=None):
         self.parent = parent
         self.children = []
         self.setParent(parent)
@@ -73,7 +73,7 @@ class StructArrayNode(TreeNode):
         super().__init__(*args, **kwargs)
         self.name = fieldname
         for i, hstruct in enumerate(getattr(self.parent.hstruct, self.name)):
-            StructNode('{} {}'.format(type(hstruct).__name__, i), hstruct, self)
+            StructNode('{} {}'.format(type(hstruct).__name__, i), hstruct, parent=self)
 
     def display(self, column):
         if column == 0:
@@ -95,9 +95,9 @@ class StructNode(TreeNode):
         if hstruct is not None:
             for fieldname, field in self.hstruct.fields.items():
                 if isinstance(field, StructArray):
-                    StructArrayNode(fieldname, self)
+                    StructArrayNode(fieldname, parent=self)
                 else:
-                    FieldNode(fieldname, field, self)
+                    FieldNode(fieldname, field, parent=self)
 
     def display(self, column):
         if column == 0:
@@ -114,8 +114,8 @@ class TagNode(TreeNode):
     def __init__(self, htag, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.htag = htag
-        StructNode('Header', htag.header, self)
-        StructNode('Data', getattr(htag, 'data'), self)
+        StructNode('Header', htag.header, parent=self)
+        StructNode('Data', getattr(htag, 'data'), parent=self)
 
     def display(self, column):
         if column == 0:
@@ -135,7 +135,7 @@ class TagTypeNode(TreeNode):
         x = list(sorted(tags(tag_type)))
         self.count = len(x)
         for tag in x:
-            TagNode(tag, self)
+            TagNode(tag, parent=self)
 
     def display(self, column):
         if column == 0:
@@ -167,11 +167,11 @@ class MapNode(TreeNode):
     def __init__(self, halomap, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.halomap = halomap
-        StructNode('map_header', halomap.map_header, self)
-        StructNode('index_header', halomap.index_header, self)
-        tag_index = TagIndexNode(self)
+        StructNode('map_header', halomap.map_header, parent=self)
+        StructNode('index_header', halomap.index_header, parent=self)
+        tag_index = TagIndexNode(parent=self)
         for tag_type in sorted(self.halomap.tag_types):
-            TagTypeNode(tag_type, self.halomap.tags, tag_index)
+            TagTypeNode(tag_type, self.halomap.tags, parent=tag_index)
 
     def display(self, column):
         if column == 0:

@@ -16,7 +16,7 @@ class HaloModel(QAbstractItemModel):
         self.root = WorkbenchNode()
 
         # Load map
-        MapNode(HaloMap.from_file(map_path), self.root)
+        MapNode(HaloMap.from_file(map_path), parent=self.root)
 
     def supportedDropActions(self):
         return Qt.CopyAction | Qt.MoveAction
